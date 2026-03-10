@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Values Card Sort</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --accent: #b85c2a;
+    --accent-light: #d4895e;
+    --muted: #8a7d6e;
+    --border: #cfc4b0;
+    --card-bg: #faf7f2;
+    --shadow: rgba(26,20,16,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* PHASE SCREENS */
+  .phase { display: none; min-height: 100vh; }
+  .phase.active { display: flex; flex-direction: column; }
+
+  /* INTRO */
+  #intro {
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  #intro .eyebrow {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 24px;
+  }
+  #intro h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(42px, 8vw, 80px);
+    font-weight: 300;
+    line-height: 1.05;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+  }
+  #intro h1 em { font-style: italic; color: var(--accent-light); }
+  #intro p {
+    font-size: 12px;
+    line-height: 1.8;
+    color: #9a8f82;
+    max-width: 480px;
+    margin: 0 auto 40px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); }
+
+  /* SORT PHASE */
+  #sort {
+    flex-direction: column;
+  }
+  .sort-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .sort-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+  }
+  .progress-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .progress-bar {
+    width: 160px;
+    height: 3px;
+    background: #333;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+
+  .sort-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+    gap: 32px;
+  }
+
+  .card-stage {
+    position: relative;
+    width: 280px;
+    height: 180px;
+  }
+  .card-stack-behind {
+    position: absolute;
+    width: 260px;
+    height: 164px;
+    top: 8px;
+    left: 10px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+  .card-stack-behind2 {
+    position: absolute;
+    width: 268px;
+    height: 170px;
+    top: 4px;
+    left: 6px;
+    background: #ede7db;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  .value-card {
+    position: absolute;
+    top: 0; left: 0;
+    width: 280px;
+    height: 180px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: 0 4px 20px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .value-card .card-num {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-size: 9px;
+    color: var(--border);
+    letter-spacing: 1px;
+  }
+  .value-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .value-card p {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.5;
+    letter-spacing: 0.3px;
+  }
+
+  .card-exit-left { animation: exitLeft 0.3s ease forwards; }
+  .card-exit-right { animation: exitRight 0.3s ease forwards; }
+  @keyframes exitLeft { to { transform: translateX(-120%) rotate(-8deg); opacity: 0; } }
+  @keyframes exitRight { to { transform: translateX(120%) rotate(8deg); opacity: 0; } }
+
+  .buckets {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 600px;
+  }
+  .bucket-btn {
+    border: 1.5px solid var(--border);
+    background: transparent;
+    padding: 10px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--muted);
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 90px;
+  }
+  .bucket-btn .bucket-icon { font-size: 16px; }
+  .bucket-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+  .bucket-btn.b1:hover { border-color: #aaa; color: #888; }
+  .bucket-btn.b2:hover { border-color: #8ab; color: #6a9; }
+  .bucket-btn.b3:hover { border-color: #6a9; color: #5a8; }
+  .bucket-btn.b4:hover { border-color: #d4895e; color: #d4895e; }
+  .bucket-btn.b5:hover { border-color: #b85c2a; color: #b85c2a; }
+
+  .sort-counts {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .sort-count-item {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .count-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* RANK PHASE */
+  #rank {
+    flex-direction: column;
+    background: var(--paper);
+  }
+  .rank-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 20px 32px;
+  }
+  .rank-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+  }
+  .rank-header p { font-size: 10px; color: var(--muted); margin-top: 4px; letter-spacing: 0.5px; }
+
+  .rank-body {
+    flex: 1;
+    padding: 32px 20px;
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .rank-instruction {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+    line-height: 1.6;
+  }
+
+  .rank-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+  .rank-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 14px 18px;
+    border-radius: 3px;
+    cursor: grab;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .rank-item:hover { border-color: var(--accent-light); box-shadow: 0 2px 12px var(--shadow); }
+  .rank-item.dragging { opacity: 0.5; cursor: grabbing; }
+  .rank-item.drag-over { border-color: var(--accent); background: #fdf8f3; }
+  .rank-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--accent);
+    min-width: 32px;
+    text-align: center;
+    line-height: 1;
+  }
+  .rank-item-content h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+  }
+  .rank-item-content p {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+  .drag-handle {
+    margin-left: auto;
+    color: var(--border);
+    font-size: 16px;
+    cursor: grab;
+  }
+  .rank-move-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-left: auto;
+  }
+  .rank-move-btn {
+    background: none;
+    border: 1px solid var(--border);
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+    cursor: pointer;
+    color: var(--muted);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.1s;
+  }
+  .rank-move-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    padding: 12px 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--accent); color: white; }
+
+  /* RESULTS PHASE */
+  #results {
+    flex-direction: column;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .results-header {
+    padding: 40px 32px 20px;
+    border-bottom: 1px solid #2a2420;
+  }
+  .results-header .eyebrow {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 8px;
+  }
+  .results-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  .results-body {
+    flex: 1;
+    padding: 32px;
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .top-values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .top-value-card {
+    background: #231f1b;
+    border: 1px solid #3a332c;
+    border-radius: 3px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .top-value-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--accent);
+  }
+  .top-value-card.rank-1::before { background: #d4a843; }
+  .top-value-card.rank-2::before { background: #aaa; }
+  .top-value-card.rank-3::before { background: #c8845a; }
+  .top-value-rank {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .top-value-card.rank-1 .top-value-rank { color: #d4a843; }
+  .top-value-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+  .top-value-desc {
+    font-size: 10px;
+    color: #7a6e62;
+    line-height: 1.5;
+  }
+
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 16px;
+    margin-top: 32px;
+  }
+
+  .all-sorted {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .bucket-group { flex: 1; min-width: 140px; }
+  .bucket-group h4 {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #2a2420;
+  }
+  .bucket-group ul { list-style: none; }
+  .bucket-group li {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: #a09080;
+    padding: 3px 0;
+    line-height: 1.3;
+  }
+
+  .results-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid #2a2420;
+  }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid #3a332c;
+    color: #7a6e62;
+    padding: 10px 24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  .btn-ghost:hover { border-color: var(--accent-light); color: var(--accent-light); }
+
+  /* REFLECTION PHASE */
+  #reflect {
+    flex-direction: column;
+    background: var(--paper);
+  }
+  .reflect-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 20px 32px;
+  }
+  .reflect-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+  }
+  .reflect-body {
+    flex: 1;
+    padding: 32px 20px;
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .reflect-question {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    border-radius: 0 3px 3px 0;
+  }
+  .reflect-question .q-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .reflect-question p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .reflect-question textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--paper);
+    padding: 10px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink);
+    resize: vertical;
+    min-height: 70px;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .reflect-question textarea:focus { border-color: var(--accent); }
+
+  .all-done-msg {
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .all-done-msg h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 300;
+    margin-bottom: 12px;
+  }
+  .all-done-msg p { font-size: 11px; color: var(--muted); line-height: 1.8; }
+
+  /* KEYBOARD HINT */
+  .key-hint {
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-align: center;
+  }
+  kbd {
+    display: inline-block;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 9px;
+    background: var(--cream);
+  }
+
+  @media (max-width: 480px) {
+    .buckets { gap: 6px; }
+    .bucket-btn { min-width: 70px; padding: 8px 10px; font-size: 8px; }
+    .top-values-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div class="phase active" id="intro">
+  <div class="eyebrow">University of New Mexico · Miller et al., 2011</div>
+  <h1>Personal<br><em>Values</em><br>Card Sort</h1>
+  <p>100 values. Five buckets. One ranking.<br>A few minutes of honest reflection — and a clearer map of what actually drives you.</p>
+  <button class="btn-primary" onclick="startSort()">Begin the Sort →</button>
+</div>
+
+<!-- SORT PHASE -->
+<div class="phase" id="sort">
+  <div class="sort-header">
+    <h2>Phase 1 — Sort</h2>
+    <div class="progress-bar-wrap">
+      <span id="sort-counter">0 / 100</span>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="sort-main">
+    <div class="card-stage">
+      <div class="card-stack-behind2"></div>
+      <div class="card-stack-behind"></div>
+      <div class="value-card" id="current-card">
+        <span class="card-num" id="card-num"></span>
+        <h3 id="card-title"></h3>
+        <p id="card-desc"></p>
+      </div>
+    </div>
+
+    <div class="buckets">
+      <button class="bucket-btn b1" onclick="sortCard(0)">
+        <span class="bucket-icon">○</span>
+        Not Important
+      </button>
+      <button class="bucket-btn b2" onclick="sortCard(1)">
+        <span class="bucket-icon">◔</span>
+        Somewhat
+      </button>
+      <button class="bucket-btn b3" onclick="sortCard(2)">
+        <span class="bucket-icon">◑</span>
+        Important
+      </button>
+      <button class="bucket-btn b4" onclick="sortCard(3)">
+        <span class="bucket-icon">◕</span>
+        Very Important
+      </button>
+      <button class="bucket-btn b5" onclick="sortCard(4)">
+        <span class="bucket-icon">●</span>
+        Most Important
+      </button>
+    </div>
+
+    <div class="key-hint">
+      Press <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> <kbd>5</kbd> to sort quickly
+    </div>
+
+    <div class="sort-counts" id="sort-counts">
+      <div class="sort-count-item"><div class="count-dot" style="background:#aaa"></div><span id="c0">0</span> Not important</div>
+      <div class="sort-count-item"><div class="count-dot" style="background:#8ab"></div><span id="c1">0</span> Somewhat</div>
+      <div class="sort-count-item"><div class="count-dot" style="background:#6a9"></div><span id="c2">0</span> Important</div>
+      <div class="sort-count-item"><div class="count-dot" style="background:#d4895e"></div><span id="c3">0</span> Very important</div>
+      <div class="sort-count-item"><div class="count-dot" style="background:#b85c2a"></div><span id="c4">0</span> Most important</div>
+    </div>
+  </div>
+</div>
+
+<!-- RANK PHASE -->
+<div class="phase" id="rank">
+  <div class="rank-header">
+    <h2>Phase 2 — Rank Your Top Values</h2>
+    <p>Drag to reorder, or use the arrows. Put your single most important value at #1.</p>
+  </div>
+  <div class="rank-body">
+    <p class="rank-instruction" id="rank-instruction"></p>
+    <div class="rank-list" id="rank-list"></div>
+    <button class="btn-secondary" onclick="showResults()">See My Values Profile →</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="phase" id="results">
+  <div class="results-header">
+    <div class="eyebrow">Your Values Profile</div>
+    <h2>What drives you</h2>
+  </div>
+  <div class="results-body">
+    <div class="section-label">Top Values — Ranked</div>
+    <div class="top-values-grid" id="top-values-grid"></div>
+
+    <div class="section-label">Full Sort Results</div>
+    <div class="all-sorted" id="all-sorted"></div>
+
+    <div class="results-actions">
+      <button class="btn-primary" onclick="showReflect()">Reflect on These Values →</button>
+      <button class="btn-ghost" onclick="printResults()">Print / Save</button>
+      <button class="btn-ghost" onclick="restart()">Start Over</button>
+    </div>
+  </div>
+</div>
+
+<!-- REFLECT -->
+<div class="phase" id="reflect">
+  <div class="reflect-header">
+    <h2>Phase 3 — Reflection</h2>
+  </div>
+  <div class="reflect-body" id="reflect-body"></div>
+</div>
+
+<script>
+const VALUES = [
+  { id:1, name:"Acceptance", desc:"to be accepted as I am" },
+  { id:2, name:"Accuracy", desc:"to be correct in my opinions and beliefs" },
+  { id:3, name:"Achievement", desc:"to have important accomplishments" },
+  { id:4, name:"Adventure", desc:"to have new and exciting experiences" },
+  { id:5, name:"Art", desc:"to appreciate or express myself in art" },
+  { id:6, name:"Attractiveness", desc:"to be physically attractive" },
+  { id:7, name:"Authority", desc:"to be in charge of others" },
+  { id:8, name:"Autonomy", desc:"to be self-determined and independent" },
+  { id:9, name:"Beauty", desc:"to appreciate beauty around me" },
+  { id:10, name:"Belonging", desc:"to have a sense of belonging, being part of" },
+  { id:11, name:"Caring", desc:"to take care of others" },
+  { id:12, name:"Challenge", desc:"to take on difficult tasks and problems" },
+  { id:13, name:"Comfort", desc:"to have a pleasant and comfortable life" },
+  { id:14, name:"Commitment", desc:"to make enduring, meaningful commitments" },
+  { id:15, name:"Compassion", desc:"to feel and act on concern for others" },
+  { id:16, name:"Complexity", desc:"to embrace the intricacies of life" },
+  { id:17, name:"Compromise", desc:"to be willing to give and take in reaching agreements" },
+  { id:18, name:"Contribution", desc:"to make a lasting contribution in the world" },
+  { id:19, name:"Cooperation", desc:"to work collaboratively with others" },
+  { id:20, name:"Courage", desc:"to be brave and strong in the face of adversity" },
+  { id:21, name:"Courtesy", desc:"to be considerate and polite toward others" },
+  { id:22, name:"Creativity", desc:"to create new things or ideas" },
+  { id:23, name:"Curiosity", desc:"to seek out, experience, and learn new things" },
+  { id:24, name:"Dependability", desc:"to be reliable and trustworthy" },
+  { id:25, name:"Diligence", desc:"to be thorough and conscientious in whatever I do" },
+  { id:26, name:"Duty", desc:"to carry out my duties and obligations" },
+  { id:27, name:"Ecology", desc:"to live in harmony with the environment" },
+  { id:28, name:"Excitement", desc:"to have a life full of thrills and stimulation" },
+  { id:29, name:"Faithfulness", desc:"to be loyal and true in relationships" },
+  { id:30, name:"Fame", desc:"to be known and recognized" },
+  { id:31, name:"Family", desc:"to have a happy, loving family" },
+  { id:32, name:"Fitness", desc:"to be physically fit and strong" },
+  { id:33, name:"Flexibility", desc:"to adjust to new circumstances easily" },
+  { id:34, name:"Forgiveness", desc:"to be forgiving of others" },
+  { id:35, name:"Freedom", desc:"to be free from undue restrictions and limitations" },
+  { id:36, name:"Friendship", desc:"to have close, supportive friends" },
+  { id:37, name:"Fun", desc:"to play and have fun" },
+  { id:38, name:"Generosity", desc:"to give what I have to others" },
+  { id:39, name:"Genuineness", desc:"to act in a manner that is true to who I am" },
+  { id:40, name:"God's Will", desc:"to seek and obey the will of God" },
+  { id:41, name:"Gratitude", desc:"to be thankful and appreciative" },
+  { id:42, name:"Growth", desc:"to keep changing and growing" },
+  { id:43, name:"Health", desc:"to be physically well and healthy" },
+  { id:44, name:"Honesty", desc:"to be honest and truthful" },
+  { id:45, name:"Hope", desc:"to maintain a positive and optimistic outlook" },
+  { id:46, name:"Humility", desc:"to be modest and unassuming" },
+  { id:47, name:"Humor", desc:"to see the humorous side of myself and the world" },
+  { id:48, name:"Imagination", desc:"to have dreams and see possibilities" },
+  { id:49, name:"Independence", desc:"to be free from depending on others" },
+  { id:50, name:"Industry", desc:"to work hard and well at my life tasks" },
+  { id:51, name:"Inner Peace", desc:"to experience personal peace" },
+  { id:52, name:"Integrity", desc:"to live my daily life consistent with my values" },
+  { id:53, name:"Intelligence", desc:"to keep my mind sharp and active" },
+  { id:54, name:"Intimacy", desc:"to share my innermost experiences with others" },
+  { id:55, name:"Justice", desc:"to promote fair and equal treatment for all" },
+  { id:56, name:"Knowledge", desc:"to learn and contribute valuable knowledge" },
+  { id:57, name:"Leadership", desc:"to inspire and guide others" },
+  { id:58, name:"Leisure", desc:"to take time to relax and enjoy" },
+  { id:59, name:"Loved", desc:"to be loved by those close to me" },
+  { id:60, name:"Loving", desc:"to give love to others" },
+  { id:61, name:"Mastery", desc:"to be competent in my everyday activities" },
+  { id:62, name:"Mindfulness", desc:"to live conscious and mindful of the present moment" },
+  { id:63, name:"Moderation", desc:"to avoid excesses and find a middle ground" },
+  { id:64, name:"Monogamy", desc:"to have one close, loving relationship" },
+  { id:65, name:"Music", desc:"to enjoy or express myself in music" },
+  { id:66, name:"Non-Conformity", desc:"to question and challenge authority and norms" },
+  { id:67, name:"Novelty", desc:"to have a life full of change and variety" },
+  { id:68, name:"Nurturance", desc:"to encourage and support others" },
+  { id:69, name:"Openness", desc:"to be open to new experiences, ideas, and options" },
+  { id:70, name:"Order", desc:"to have a life that is well-ordered and organized" },
+  { id:71, name:"Passion", desc:"to have deep feelings about ideas, activities, or people" },
+  { id:72, name:"Patriotism", desc:"to love, serve, and protect my country" },
+  { id:73, name:"Pleasure", desc:"to feel good" },
+  { id:74, name:"Popularity", desc:"to be well-liked by many people" },
+  { id:75, name:"Power", desc:"to have control over others" },
+  { id:76, name:"Practicality", desc:"to focus on what is practical, prudent, and sensible" },
+  { id:77, name:"Protect", desc:"to protect and keep safe those I love" },
+  { id:78, name:"Provide", desc:"to provide for and take care of my family" },
+  { id:79, name:"Purpose", desc:"to have meaning and direction in my life" },
+  { id:80, name:"Rationality", desc:"to be guided by reason, logic, and evidence" },
+  { id:81, name:"Realism", desc:"to see and act realistically and practically" },
+  { id:82, name:"Responsibility", desc:"to make and carry out responsible decisions" },
+  { id:83, name:"Risk", desc:"to take risks and chances" },
+  { id:84, name:"Romance", desc:"to have intense, exciting love in my life" },
+  { id:85, name:"Safety", desc:"to be safe and secure" },
+  { id:86, name:"Self-Acceptance", desc:"to accept myself as I am" },
+  { id:87, name:"Self-Control", desc:"to be disciplined in my own actions" },
+  { id:88, name:"Self-Esteem", desc:"to feel good about myself" },
+  { id:89, name:"Self-Knowledge", desc:"to have a deep and honest understanding of myself" },
+  { id:90, name:"Service", desc:"to be helpful and of service to others" },
+  { id:91, name:"Sexuality", desc:"to have an active and satisfying sex life" },
+  { id:92, name:"Simplicity", desc:"to live life simply, with minimal needs" },
+  { id:93, name:"Solitude", desc:"to have time and space where I can be apart from others" },
+  { id:94, name:"Spirituality", desc:"to grow and mature spiritually" },
+  { id:95, name:"Stability", desc:"to have a life that stays fairly consistent" },
+  { id:96, name:"Tolerance", desc:"to accept and respect those who differ from me" },
+  { id:97, name:"Tradition", desc:"to follow respected patterns of the past" },
+  { id:98, name:"Virtue", desc:"to live a morally pure and excellent life" },
+  { id:99, name:"Wealth", desc:"to have plenty of money" },
+  { id:100, name:"World Peace", desc:"to work to promote peace in the world" }
+];
+
+let currentIndex = 0;
+let sorted = []; // {value, bucket}
+let topValues = [];
+let dragSrc = null;
+
+function showPhase(id) {
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startSort() {
+  currentIndex = 0;
+  sorted = [];
+  showPhase('sort');
+  renderCard();
+}
+
+function renderCard() {
+  if (currentIndex >= VALUES.length) {
+    finishSort();
+    return;
+  }
+  const v = VALUES[currentIndex];
+  document.getElementById('card-title').textContent = v.name;
+  document.getElementById('card-desc').textContent = v.desc;
+  document.getElementById('card-num').textContent = `#${v.id}`;
+  document.getElementById('sort-counter').textContent = `${currentIndex} / ${VALUES.length}`;
+  document.getElementById('progress-fill').style.width = `${(currentIndex/VALUES.length)*100}%`;
+  updateCounts();
+}
+
+function sortCard(bucket) {
+  const card = document.getElementById('current-card');
+  card.classList.add(bucket <= 2 ? 'card-exit-left' : 'card-exit-right');
+  sorted.push({ value: VALUES[currentIndex], bucket });
+  currentIndex++;
+  setTimeout(() => {
+    card.classList.remove('card-exit-left', 'card-exit-right');
+    renderCard();
+  }, 280);
+}
+
+function updateCounts() {
+  for (let i=0; i<5; i++) {
+    document.getElementById(`c${i}`).textContent = sorted.filter(s=>s.bucket===i).length;
+  }
+}
+
+function finishSort() {
+  // Get "most important" (bucket 4), if too many include "very important" (bucket 3)
+  let top = sorted.filter(s => s.bucket === 4).map(s => s.value);
+  if (top.length < 5) {
+    const veryImp = sorted.filter(s => s.bucket === 3).map(s => s.value);
+    top = [...top, ...veryImp].slice(0, 10);
+  }
+  if (top.length > 10) top = top.slice(0, 10);
+  topValues = top;
+
+  // Build rank list
+  const rankList = document.getElementById('rank-list');
+  const instr = document.getElementById('rank-instruction');
+  instr.textContent = `You marked ${top.length} values as most/very important. Drag them into your personal priority order — #1 being the most central to who you are.`;
+  rankList.innerHTML = '';
+  top.forEach((v, i) => {
+    const item = buildRankItem(v, i+1);
+    rankList.appendChild(item);
+  });
+
+  showPhase('rank');
+  initDragDrop();
+}
+
+function buildRankItem(v, rank) {
+  const div = document.createElement('div');
+  div.className = 'rank-item';
+  div.dataset.id = v.id;
+  div.draggable = true;
+  div.innerHTML = `
+    <div class="rank-num">${rank}</div>
+    <div class="rank-item-content">
+      <h4>${v.name}</h4>
+      <p>${v.desc}</p>
+    </div>
+    <div class="rank-move-btns">
+      <button class="rank-move-btn" onclick="moveRankItem(this,-1)">▲</button>
+      <button class="rank-move-btn" onclick="moveRankItem(this,1)">▼</button>
+    </div>
+  `;
+  return div;
+}
+
+function moveRankItem(btn, dir) {
+  const item = btn.closest('.rank-item');
+  const list = item.parentNode;
+  const items = [...list.children];
+  const idx = items.indexOf(item);
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= items.length) return;
+  if (dir === -1) list.insertBefore(item, items[newIdx]);
+  else list.insertBefore(items[newIdx], item);
+  updateRankNumbers();
+}
+
+function updateRankNumbers() {
+  const items = document.querySelectorAll('#rank-list .rank-item');
+  items.forEach((item, i) => {
+    item.querySelector('.rank-num').textContent = i + 1;
+  });
+}
+
+function initDragDrop() {
+  const list = document.getElementById('rank-list');
+  list.addEventListener('dragstart', e => {
+    dragSrc = e.target.closest('.rank-item');
+    dragSrc.classList.add('dragging');
+  });
+  list.addEventListener('dragend', e => {
+    document.querySelectorAll('.rank-item').forEach(i => i.classList.remove('dragging','drag-over'));
+    updateRankNumbers();
+  });
+  list.addEventListener('dragover', e => {
+    e.preventDefault();
+    const target = e.target.closest('.rank-item');
+    if (target && target !== dragSrc) {
+      document.querySelectorAll('.rank-item').forEach(i => i.classList.remove('drag-over'));
+      target.classList.add('drag-over');
+      const rect = target.getBoundingClientRect();
+      const mid = rect.top + rect.height / 2;
+      if (e.clientY < mid) list.insertBefore(dragSrc, target);
+      else list.insertBefore(dragSrc, target.nextSibling);
+    }
+  });
+}
+
+function showResults() {
+  // Build final ranked list from DOM
+  const items = document.querySelectorAll('#rank-list .rank-item');
+  const ranked = [...items].map(item => {
+    const id = parseInt(item.dataset.id);
+    return VALUES.find(v => v.id === id);
+  });
+
+  // Top grid
+  const grid = document.getElementById('top-values-grid');
+  grid.innerHTML = '';
+  ranked.forEach((v, i) => {
+    const card = document.createElement('div');
+    card.className = `top-value-card rank-${i+1}`;
+    card.innerHTML = `
+      <div class="top-value-rank"># ${i+1}${i===0?' — Most Important':''}</div>
+      <div class="top-value-name">${v.name}</div>
+      <div class="top-value-desc">${v.desc}</div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // All sorted buckets
+  const bucketNames = ['Not Important','Somewhat Important','Important','Very Important','Most Important'];
+  const allSorted = document.getElementById('all-sorted');
+  allSorted.innerHTML = '';
+  for (let b = 4; b >= 0; b--) {
+    const vals = sorted.filter(s => s.bucket === b);
+    if (vals.length === 0) continue;
+    const group = document.createElement('div');
+    group.className = 'bucket-group';
+    group.innerHTML = `<h4>${bucketNames[b]} (${vals.length})</h4><ul>${vals.map(s=>`<li>${s.value.name}</li>`).join('')}</ul>`;
+    allSorted.appendChild(group);
+  }
+
+  showPhase('results');
+}
+
+function showReflect() {
+  const items = document.querySelectorAll('#rank-list .rank-item');
+  const ranked = [...items].map(item => VALUES.find(v => v.id === parseInt(item.dataset.id)));
+  const top3 = ranked.slice(0, 3);
+
+  const questions = [
+    { label: "Meaning", q: `What does <strong>${top3[0]?.name}</strong> mean to you personally? Why did it rise to the top?` },
+    { label: "Evidence", q: `How have you shown <strong>${top3[0]?.name}</strong> and <strong>${top3[1]?.name}</strong> in your daily life recently?` },
+    { label: "Gap Analysis", q: `In what ways could you be more true to <strong>${top3[2]?.name}</strong>? Where do you feel the gap?` },
+    { label: "Tension", q: `Do any of your top values ever conflict with each other? How do you navigate that tension?` },
+    { label: "Forward", q: `If your decisions over the next 12 months fully reflected your top values, what would change?` },
+  ];
+
+  const body = document.getElementById('reflect-body');
+  body.innerHTML = `<p style="font-size:11px;color:var(--muted);margin-bottom:24px;line-height:1.8;">Take a few minutes with each question. There are no right answers — just honest ones.</p>`;
+
+  questions.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'reflect-question';
+    div.innerHTML = `
+      <div class="q-label">Q${i+1} · ${q.label}</div>
+      <p>${q.q}</p>
+      <textarea placeholder="Your thoughts..."></textarea>
+    `;
+    body.appendChild(div);
+  });
+
+  const done = document.createElement('div');
+  done.className = 'all-done-msg';
+  done.innerHTML = `
+    <h3>You know yourself better than you think.</h3>
+    <p>This profile is a living document — revisit it annually.<br>Values shift as you grow. What you've surfaced today is a snapshot of who you are right now.</p>
+    <br>
+    <button class="btn-primary" onclick="printResults()" style="margin-top:8px">Print / Save Results →</button>
+  `;
+  body.appendChild(done);
+
+  showPhase('reflect');
+}
+
+function printResults() { window.print(); }
+function restart() { startSort(); }
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (document.getElementById('sort').classList.contains('active')) {
+    const map = {'1':0,'2':1,'3':2,'4':3,'5':4};
+    if (map[e.key] !== undefined) sortCard(map[e.key]);
+  }
+});
+</script>
+</body>
+</html>
