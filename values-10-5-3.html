@@ -158,46 +158,157 @@
     color: #7a6e62;
   }
 
-  /* ── PHASE 1: PICK ─────────────────────────────────── */
-  #pick .phase-body {
+  /* ── PHASE 1: SORT ─────────────────────────────────── */
+  #sort {
+    flex-direction: column;
+  }
+  .sort-main {
     flex: 1;
-    padding: 32px 24px;
-    max-width: 940px;
-    margin: 0 auto;
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+    gap: 28px;
   }
-  .values-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-    gap: 10px;
-    margin-bottom: 8px;
+  .card-stage {
+    position: relative;
+    width: 280px;
+    height: 180px;
   }
-  .value-tile {
+  .card-stack-behind {
+    position: absolute;
+    width: 260px;
+    height: 164px;
+    top: 8px;
+    left: 10px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+  .card-stack-behind2 {
+    position: absolute;
+    width: 268px;
+    height: 170px;
+    top: 4px;
+    left: 6px;
+    background: #ede7db;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+  .value-card {
+    position: absolute;
+    top: 0; left: 0;
+    width: 280px;
+    height: 180px;
     background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: 0 4px 20px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .value-card .card-num {
+    position: absolute;
+    top: 10px; right: 14px;
+    font-size: 9px;
+    color: var(--border);
+    letter-spacing: 1px;
+  }
+  .value-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .value-card p {
+    font-size: 10px;
+    color: var(--muted);
+    line-height: 1.5;
+    letter-spacing: 0.3px;
+  }
+  .card-exit-left  { animation: exitLeft  0.3s ease forwards; }
+  .card-exit-right { animation: exitRight 0.3s ease forwards; }
+  @keyframes exitLeft  { to { transform: translateX(-120%) rotate(-8deg); opacity: 0; } }
+  @keyframes exitRight { to { transform: translateX(120%)  rotate(8deg);  opacity: 0; } }
+
+  .buckets {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 600px;
+  }
+  .bucket-btn {
     border: 1.5px solid var(--border);
-    border-radius: 3px;
-    padding: 14px 15px;
+    background: transparent;
+    padding: 10px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
     cursor: pointer;
     transition: all 0.15s;
-    user-select: none;
+    color: var(--muted);
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 90px;
   }
-  .value-tile:hover { border-color: var(--accent-light); box-shadow: 0 2px 8px var(--shadow); }
-  .value-tile.selected {
-    border-color: var(--accent);
-    background: #fdf5ef;
-    box-shadow: 0 2px 12px rgba(184,92,42,0.15);
+  .bucket-btn .bucket-icon { font-size: 16px; }
+  .bucket-btn.b1:hover { border-color: #aaa; color: #888; }
+  .bucket-btn.b2:hover { border-color: #8ab; color: #6a9; }
+  .bucket-btn.b3:hover { border-color: #6a9; color: #5a8; }
+  .bucket-btn.b4:hover { border-color: #d4895e; color: #d4895e; }
+  .bucket-btn.b5:hover { border-color: #b85c2a; color: #b85c2a; }
+
+  .sort-counts {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  .value-tile.locked { opacity: 0.38; cursor: not-allowed; }
-  .value-tile.locked:hover { border-color: var(--border); box-shadow: none; }
-  .value-tile h4 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 17px;
-    font-weight: 400;
-    margin-bottom: 4px;
-    transition: color 0.15s;
+  .sort-count-item {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
-  .value-tile.selected h4 { color: var(--accent); }
-  .value-tile p { font-size: 9px; color: var(--muted); line-height: 1.4; }
+  .count-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  .key-hint { font-size: 9px; color: var(--muted); letter-spacing: 1px; text-align: center; }
+  kbd {
+    display: inline-block;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 9px;
+    background: var(--cream);
+  }
+
+  .progress-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .progress-bar { width: 160px; height: 3px; background: #333; border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); transition: width 0.4s ease; }
 
   /* ── PHASES 2 & 3: CUT ─────────────────────────────── */
   .cut-body {
@@ -459,7 +570,8 @@
   .all-done-msg p { font-size: 11px; color: var(--muted); line-height: 1.8; }
 
   @media (max-width: 480px) {
-    .values-grid { grid-template-columns: repeat(2, 1fr); }
+    .buckets { gap: 6px; }
+    .bucket-btn { min-width: 70px; padding: 8px 10px; font-size: 8px; }
     .cut-grid { grid-template-columns: 1fr 1fr; }
     .score-btn { width: 28px; height: 28px; font-size: 9px; }
     .core-grid { grid-template-columns: 1fr; }
@@ -493,23 +605,57 @@
       <div class="step-label">Confirm</div>
     </div>
   </div>
-  <button class="btn-primary" onclick="startPick()">Begin the Exercise →</button>
+  <button class="btn-primary" onclick="startSort()">Begin the Exercise →</button>
 </div>
 
-<!-- ── PHASE 1: PICK 10 ──────────────────────────────────── -->
-<div class="phase" id="pick">
+<!-- ── PHASE 1: SORT ──────────────────────────────────────── -->
+<div class="phase" id="sort">
   <div class="phase-header">
-    <div>
-      <h2>Phase 1 — Pick Ten</h2>
-      <div class="sub">Which 10 values matter most to you personally? Trust your gut — you have 10 minutes.</div>
+    <h2>Phase 1 — Sort</h2>
+    <div class="progress-bar-wrap">
+      <span id="sort-counter">0 / 50</span>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
     </div>
-    <div class="counter" id="pick-counter">0 / 10</div>
   </div>
-  <div class="phase-body">
-    <div class="values-grid" id="values-grid"></div>
-    <div class="phase-footer">
-      <div class="footer-note" id="pick-note">Select 10 values to continue.</div>
-      <button class="btn-primary" id="pick-btn" disabled onclick="startCut5()">Cut to Five →</button>
+  <div class="sort-main">
+    <div class="card-stage">
+      <div class="card-stack-behind2"></div>
+      <div class="card-stack-behind"></div>
+      <div class="value-card" id="current-card">
+        <span class="card-num" id="card-num"></span>
+        <h3 id="card-title"></h3>
+        <p id="card-desc"></p>
+      </div>
+    </div>
+
+    <div class="buckets">
+      <button class="bucket-btn b1" onclick="sortCard(0)">
+        <span class="bucket-icon">○</span>Not Important
+      </button>
+      <button class="bucket-btn b2" onclick="sortCard(1)">
+        <span class="bucket-icon">◔</span>Somewhat
+      </button>
+      <button class="bucket-btn b3" onclick="sortCard(2)">
+        <span class="bucket-icon">◑</span>Important
+      </button>
+      <button class="bucket-btn b4" onclick="sortCard(3)">
+        <span class="bucket-icon">◕</span>Very Important
+      </button>
+      <button class="bucket-btn b5" onclick="sortCard(4)">
+        <span class="bucket-icon">●</span>Most Important
+      </button>
+    </div>
+
+    <div class="key-hint">
+      Press <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> <kbd>5</kbd> to sort quickly
+    </div>
+
+    <div class="sort-counts" id="sort-counts">
+      <div class="sort-count-item"><div class="count-dot" style="background:#aaa"></div><span id="c0">0</span> Not important</div>
+      <div class="sort-count-item"><div class="count-dot" style="background:#8ab"></div><span id="c1">0</span> Somewhat</div>
+      <div class="sort-count-item"><div class="count-dot" style="background:#6a9"></div><span id="c2">0</span> Important</div>
+      <div class="sort-count-item"><div class="count-dot" style="background:#d4895e"></div><span id="c3">0</span> Very important</div>
+      <div class="sort-count-item"><div class="count-dot" style="background:#b85c2a"></div><span id="c4">0</span> Most important</div>
     </div>
   </div>
 </div>
@@ -519,7 +665,7 @@
   <div class="phase-header">
     <div>
       <h2>Phase 2 — Cut to Five</h2>
-      <div class="sub">Of your 10, which 5 most define you as a human being? You have 5 minutes.</div>
+      <div class="sub">From your highest-rated values, which 5 most define you as a human being? You have 5 minutes.</div>
     </div>
     <div class="counter" id="cut5-counter">0 / 5 kept</div>
   </div>
@@ -674,11 +820,13 @@ const REFLECT_THEMES = [
 ];
 
 // ── State ───────────────────────────────────────────────────
-let picked  = new Set(); // Phase 1 selections
-let kept5   = new Set(); // Phase 2 selections
-let kept3   = new Set(); // Phase 3 selections
+let sorted     = [];     // Phase 1: [{value, bucket}, ...]
+let sortIndex  = 0;
+let sortPool   = [];     // names fed into cut5
+let kept5      = new Set(); // Phase 2 selections
+let kept3      = new Set(); // Phase 3 selections
 let confirmIdx = 0;
-let scores  = {};        // valueName → [15 numbers]
+let scores     = {};     // valueName → [15 numbers]
 let coreValues = [];     // final 3 names
 
 // ── Utilities ───────────────────────────────────────────────
@@ -695,55 +843,66 @@ function scoreTier(total) {
   return               { label: 'SPECIAL', cls: 'tier-special', desc: 'This value appears more aspirational than core. It may be worth starting over.' };
 }
 
-// ── Phase 1: Pick ───────────────────────────────────────────
-function startPick() {
-  picked.clear();
-  const grid = document.getElementById('values-grid');
-  grid.innerHTML = '';
-  VALUES.forEach(v => {
-    const tile = document.createElement('div');
-    tile.className = 'value-tile';
-    tile.dataset.name = v.name;
-    tile.innerHTML = `<h4>${v.name}</h4><p>${v.desc}</p>`;
-    tile.addEventListener('click', () => togglePick(v.name));
-    grid.appendChild(tile);
-  });
-  updatePickUI();
-  showPhase('pick');
+// ── Phase 1: Sort ───────────────────────────────────────────
+function startSort() {
+  sorted = [];
+  sortIndex = 0;
+  showPhase('sort');
+  renderSortCard();
 }
 
-function togglePick(name) {
-  if (picked.has(name)) { picked.delete(name); }
-  else if (picked.size < 10) { picked.add(name); }
-  updatePickUI();
+function renderSortCard() {
+  if (sortIndex >= VALUES.length) { finishSort(); return; }
+  const v = VALUES[sortIndex];
+  document.getElementById('card-title').textContent = v.name;
+  document.getElementById('card-desc').textContent  = v.desc;
+  document.getElementById('card-num').textContent   = `#${sortIndex + 1}`;
+  document.getElementById('sort-counter').textContent = `${sortIndex} / ${VALUES.length}`;
+  document.getElementById('progress-fill').style.width = `${(sortIndex / VALUES.length) * 100}%`;
+  updateSortCounts();
 }
 
-function updatePickUI() {
-  const n = picked.size;
-  document.getElementById('pick-counter').textContent = `${n} / 10`;
-  document.querySelectorAll('.value-tile').forEach(tile => {
-    const sel = picked.has(tile.dataset.name);
-    tile.classList.toggle('selected', sel);
-    tile.classList.toggle('locked', n >= 10 && !sel);
-  });
-  document.getElementById('pick-btn').disabled = n !== 10;
-  document.getElementById('pick-note').textContent =
-    n === 10 ? "You've picked your 10. Continue when ready." :
-    n === 9  ? "One more." :
-    `Select ${10 - n} more values to continue.`;
+function sortCard(bucket) {
+  const card = document.getElementById('current-card');
+  card.classList.add(bucket <= 2 ? 'card-exit-left' : 'card-exit-right');
+  sorted.push({ value: VALUES[sortIndex], bucket });
+  sortIndex++;
+  setTimeout(() => {
+    card.classList.remove('card-exit-left', 'card-exit-right');
+    renderSortCard();
+  }, 280);
+}
+
+function updateSortCounts() {
+  for (let i = 0; i < 5; i++) {
+    document.getElementById(`c${i}`).textContent = sorted.filter(s => s.bucket === i).length;
+  }
+}
+
+function finishSort() {
+  // Build pool from highest buckets, working down until we have at least 5
+  let pool = sorted.filter(s => s.bucket === 4).map(s => s.value.name);
+  if (pool.length < 5) {
+    pool = [...pool, ...sorted.filter(s => s.bucket === 3).map(s => s.value.name)];
+  }
+  if (pool.length < 5) {
+    pool = [...pool, ...sorted.filter(s => s.bucket === 2).map(s => s.value.name)];
+  }
+  sortPool = pool;
+  startCut5();
 }
 
 // ── Phase 2: Cut to 5 ───────────────────────────────────────
 function startCut5() {
   kept5.clear();
-  renderCutGrid('cut5-grid', [...picked], kept5, 5, 'cut5-counter', 'cut5-note', 'cut5-btn', toggleCut5);
+  renderCutGrid('cut5-grid', sortPool, kept5, 5, 'cut5-counter', 'cut5-note', 'cut5-btn', toggleCut5);
   showPhase('cut5');
 }
 
 function toggleCut5(name) {
   if (kept5.has(name)) kept5.delete(name);
   else if (kept5.size < 5) kept5.add(name);
-  renderCutGrid('cut5-grid', [...picked], kept5, 5, 'cut5-counter', 'cut5-note', 'cut5-btn', toggleCut5);
+  renderCutGrid('cut5-grid', sortPool, kept5, 5, 'cut5-counter', 'cut5-note', 'cut5-btn', toggleCut5);
 }
 
 // ── Phase 3: Cut to 3 ───────────────────────────────────────
@@ -932,7 +1091,7 @@ function buildResultsPage() {
   actions.innerHTML = `
     <button class="btn-primary" onclick="showReflect()">Reflect on These Values →</button>
     <button class="btn-ghost" onclick="window.print()">Print / Save</button>
-    <button class="btn-ghost" onclick="startPick()">Start Over</button>
+    <button class="btn-ghost" onclick="startSort()">Start Over</button>
   `;
   body.appendChild(actions);
 }
@@ -968,6 +1127,14 @@ function showReflect() {
 
   showPhase('reflect');
 }
+
+// Keyboard shortcuts for sort phase
+document.addEventListener('keydown', e => {
+  if (document.getElementById('sort').classList.contains('active')) {
+    const map = { '1': 0, '2': 1, '3': 2, '4': 3, '5': 4 };
+    if (map[e.key] !== undefined) sortCard(map[e.key]);
+  }
+});
 </script>
 </body>
 </html>
