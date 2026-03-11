@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>10-5-3 Values Exercise</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --accent: #b85c2a;
+    --accent-light: #d4895e;
+    --muted: #8a7d6e;
+    --border: #cfc4b0;
+    --card-bg: #faf7f2;
+    --shadow: rgba(26,20,16,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .phase { display: none; min-height: 100vh; }
+  .phase.active { display: flex; flex-direction: column; }
+
+  /* ── SHARED HEADER ─────────────────────────────────── */
+  .phase-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 20px 32px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .phase-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+  }
+  .phase-header .sub { font-size: 10px; color: var(--muted); margin-top: 4px; letter-spacing: 0.5px; }
+  .phase-header .counter { font-size: 11px; color: var(--accent-light); letter-spacing: 1px; white-space: nowrap; padding-top: 4px; }
+
+  /* ── SHARED BUTTONS ────────────────────────────────── */
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 14px 40px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  .btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid #3a332c;
+    color: #7a6e62;
+    padding: 10px 24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  .btn-ghost:hover { border-color: var(--accent-light); color: var(--accent-light); }
+
+  .phase-footer {
+    padding: 24px 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .footer-note { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; flex: 1; }
+
+  /* ── INTRO ─────────────────────────────────────────── */
+  #intro {
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  #intro .eyebrow {
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 24px;
+  }
+  #intro h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(42px, 8vw, 80px);
+    font-weight: 300;
+    line-height: 1.05;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+  }
+  #intro h1 em { font-style: italic; color: var(--accent-light); }
+  #intro .tagline {
+    font-size: 12px;
+    line-height: 1.8;
+    color: #9a8f82;
+    max-width: 480px;
+    margin: 0 auto 40px;
+  }
+  .intro-steps {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 560px;
+    margin: 0 auto 48px;
+  }
+  .intro-step {
+    background: #231f1b;
+    border: 1px solid #3a332c;
+    border-radius: 3px;
+    padding: 18px 22px;
+    min-width: 110px;
+    text-align: center;
+  }
+  .intro-step .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    font-weight: 300;
+    color: var(--accent-light);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .intro-step .step-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #7a6e62;
+  }
+
+  /* ── PHASE 1: PICK ─────────────────────────────────── */
+  #pick .phase-body {
+    flex: 1;
+    padding: 32px 24px;
+    max-width: 940px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .value-tile {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    padding: 14px 15px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .value-tile:hover { border-color: var(--accent-light); box-shadow: 0 2px 8px var(--shadow); }
+  .value-tile.selected {
+    border-color: var(--accent);
+    background: #fdf5ef;
+    box-shadow: 0 2px 12px rgba(184,92,42,0.15);
+  }
+  .value-tile.locked { opacity: 0.38; cursor: not-allowed; }
+  .value-tile.locked:hover { border-color: var(--border); box-shadow: none; }
+  .value-tile h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 400;
+    margin-bottom: 4px;
+    transition: color 0.15s;
+  }
+  .value-tile.selected h4 { color: var(--accent); }
+  .value-tile p { font-size: 9px; color: var(--muted); line-height: 1.4; }
+
+  /* ── PHASES 2 & 3: CUT ─────────────────────────────── */
+  .cut-body {
+    flex: 1;
+    padding: 32px 24px;
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .cut-instruction {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+    line-height: 1.6;
+  }
+  .cut-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .cut-tile {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 3px;
+    padding: 16px 18px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+    position: relative;
+  }
+  .cut-tile:hover { border-color: var(--accent-light); }
+  .cut-tile.kept { border-color: var(--accent); background: #fdf5ef; }
+  .cut-tile.locked { opacity: 0.35; cursor: not-allowed; }
+  .cut-tile.locked:hover { border-color: var(--border); }
+  .cut-tile .cut-status {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--border);
+    margin-bottom: 8px;
+  }
+  .cut-tile.kept .cut-status { color: var(--accent); }
+  .cut-tile h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 4px;
+    transition: color 0.15s;
+  }
+  .cut-tile.kept h4 { color: var(--accent); }
+  .cut-tile p { font-size: 9px; color: var(--muted); line-height: 1.4; }
+
+  /* ── PHASE 4: CONFIRM ──────────────────────────────── */
+  #confirm .phase-body {
+    flex: 1;
+    padding: 32px 24px;
+    max-width: 680px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .confirm-value-eyebrow {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin-bottom: 8px;
+  }
+  .confirm-value-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .confirm-value-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    letter-spacing: 0.3px;
+  }
+  .confirm-dots {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 32px;
+  }
+  .confirm-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+  .confirm-dot.active { background: var(--accent); }
+  .confirm-dot.done { background: var(--accent-light); }
+
+  .questions-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+  .question-row {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 16px 18px;
+  }
+  .question-row.answered { border-left: 3px solid var(--accent); }
+  .question-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.5;
+    margin-bottom: 12px;
+    color: var(--ink);
+  }
+  .score-btns { display: flex; gap: 4px; flex-wrap: wrap; }
+  .score-btn {
+    width: 34px;
+    height: 34px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    border-radius: 2px;
+    color: var(--muted);
+    transition: all 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .score-btn:hover { border-color: var(--accent-light); color: var(--accent-light); }
+  .score-btn.selected { border-color: var(--accent); background: var(--accent); color: white; }
+  .score-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 8px;
+    color: var(--border);
+    letter-spacing: 0.5px;
+    margin-top: 5px;
+    padding: 0 2px;
+  }
+
+  .score-result-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 28px 24px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .score-total {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 80px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .score-out-of { font-size: 10px; color: var(--muted); letter-spacing: 2px; margin-bottom: 12px; }
+  .score-tier {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 400;
+    margin-bottom: 8px;
+  }
+  .score-tier.tier-core { color: #d4a843; }
+  .score-tier.tier-strong { color: var(--accent-light); }
+  .score-tier.tier-unsure { color: var(--muted); }
+  .score-tier.tier-special { color: #888; }
+  .score-tier-desc { font-size: 11px; color: var(--muted); line-height: 1.7; max-width: 420px; margin: 0 auto; }
+
+  /* ── RESULTS ───────────────────────────────────────── */
+  #results { flex-direction: column; background: var(--ink); color: var(--paper); }
+  .results-header { padding: 40px 32px 24px; border-bottom: 1px solid #2a2420; }
+  .results-header .eyebrow { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-light); margin-bottom: 8px; }
+  .results-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; font-style: italic; }
+  .results-body { flex: 1; padding: 32px; max-width: 800px; margin: 0 auto; width: 100%; }
+  .section-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-light); margin-bottom: 16px; margin-top: 32px; }
+  .section-label:first-child { margin-top: 0; }
+
+  .core-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .core-card {
+    background: #231f1b;
+    border: 1px solid #3a332c;
+    border-radius: 3px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .core-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+  }
+  .core-card:nth-child(1)::before { background: #d4a843; }
+  .core-card:nth-child(2)::before { background: #aaa; }
+  .core-card:nth-child(3)::before { background: #c8845a; }
+  .core-card-rank { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .core-card:nth-child(1) .core-card-rank { color: #d4a843; }
+  .core-card-name { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400; margin-bottom: 6px; }
+  .core-card-desc { font-size: 9px; color: #7a6e62; line-height: 1.5; margin-bottom: 10px; }
+  .core-card-score { font-size: 10px; color: var(--accent-light); }
+  .core-card-tier { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: #5a4e44; margin-top: 2px; }
+
+  .results-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 40px; padding-top: 24px; border-top: 1px solid #2a2420; }
+
+  /* ── REFLECT ───────────────────────────────────────── */
+  #reflect { flex-direction: column; background: var(--paper); }
+  .reflect-body { flex: 1; padding: 32px 20px; max-width: 700px; margin: 0 auto; width: 100%; }
+  .reflect-theme {
+    margin-bottom: 28px;
+  }
+  .reflect-theme-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .reflect-q {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 18px 22px;
+    border-radius: 0 3px 3px 0;
+  }
+  .reflect-q p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .reflect-q textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--paper);
+    padding: 10px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink);
+    resize: vertical;
+    min-height: 72px;
+    border-radius: 2px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .reflect-q textarea:focus { border-color: var(--accent); }
+  .all-done-msg { text-align: center; padding: 40px 20px; }
+  .all-done-msg h3 { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; margin-bottom: 12px; }
+  .all-done-msg p { font-size: 11px; color: var(--muted); line-height: 1.8; }
+
+  @media (max-width: 480px) {
+    .values-grid { grid-template-columns: repeat(2, 1fr); }
+    .cut-grid { grid-template-columns: 1fr 1fr; }
+    .score-btn { width: 28px; height: 28px; font-size: 9px; }
+    .core-grid { grid-template-columns: 1fr; }
+    .phase-header { padding: 16px 20px; }
+    .phase-footer { padding: 16px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── INTRO ─────────────────────────────────────────────── -->
+<div class="phase active" id="intro">
+  <div class="eyebrow">Stan Slap · Bury My Heart at Conference Room B</div>
+  <h1>The <em>10–5–3</em><br>Values Exercise</h1>
+  <p class="tagline">50 values. Three reductions. A deep confirmation.<br>Not a ranking — a process that finds what you can't live without.</p>
+  <div class="intro-steps">
+    <div class="intro-step">
+      <div class="step-num">10</div>
+      <div class="step-label">Pick Ten</div>
+    </div>
+    <div class="intro-step">
+      <div class="step-num">5</div>
+      <div class="step-label">Cut to Five</div>
+    </div>
+    <div class="intro-step">
+      <div class="step-num">3</div>
+      <div class="step-label">Cut to Three</div>
+    </div>
+    <div class="intro-step">
+      <div class="step-num">✓</div>
+      <div class="step-label">Confirm</div>
+    </div>
+  </div>
+  <button class="btn-primary" onclick="startPick()">Begin the Exercise →</button>
+</div>
+
+<!-- ── PHASE 1: PICK 10 ──────────────────────────────────── -->
+<div class="phase" id="pick">
+  <div class="phase-header">
+    <div>
+      <h2>Phase 1 — Pick Ten</h2>
+      <div class="sub">Which 10 values matter most to you personally? Trust your gut — you have 10 minutes.</div>
+    </div>
+    <div class="counter" id="pick-counter">0 / 10</div>
+  </div>
+  <div class="phase-body">
+    <div class="values-grid" id="values-grid"></div>
+    <div class="phase-footer">
+      <div class="footer-note" id="pick-note">Select 10 values to continue.</div>
+      <button class="btn-primary" id="pick-btn" disabled onclick="startCut5()">Cut to Five →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PHASE 2: CUT TO 5 ─────────────────────────────────── -->
+<div class="phase" id="cut5">
+  <div class="phase-header">
+    <div>
+      <h2>Phase 2 — Cut to Five</h2>
+      <div class="sub">Of your 10, which 5 most define you as a human being? You have 5 minutes.</div>
+    </div>
+    <div class="counter" id="cut5-counter">0 / 5 kept</div>
+  </div>
+  <div class="cut-body">
+    <p class="cut-instruction">Click a value to keep it. Keep exactly 5 — the ones that most define who you are, not what you do.</p>
+    <div class="cut-grid" id="cut5-grid"></div>
+    <div class="phase-footer">
+      <div class="footer-note" id="cut5-note">Select 5 values to continue.</div>
+      <button class="btn-primary" id="cut5-btn" disabled onclick="startCut3()">Cut to Three →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PHASE 3: CUT TO 3 ─────────────────────────────────── -->
+<div class="phase" id="cut3">
+  <div class="phase-header">
+    <div>
+      <h2>Phase 3 — Cut to Three</h2>
+      <div class="sub">Of your 5, which 3 could you absolutely not live without? You have 3 minutes.</div>
+    </div>
+    <div class="counter" id="cut3-counter">0 / 3 kept</div>
+  </div>
+  <div class="cut-body">
+    <p class="cut-instruction">These are your core values — the ones you'd fight for, sacrifice for, build your life around. Keep only 3.</p>
+    <div class="cut-grid" id="cut3-grid"></div>
+    <div class="phase-footer">
+      <div class="footer-note" id="cut3-note">Select 3 values to continue.</div>
+      <button class="btn-primary" id="cut3-btn" disabled onclick="startConfirm()">Confirm Your Values →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PHASE 4: CONFIRM ──────────────────────────────────── -->
+<div class="phase" id="confirm">
+  <div class="phase-header">
+    <div>
+      <h2>Phase 4 — Confirm</h2>
+      <div class="sub">15 questions per value, scored 1–10. Be honest — this is for you.</div>
+    </div>
+    <div class="counter" id="confirm-counter">Value 1 of 3</div>
+  </div>
+  <div class="phase-body" id="confirm-body"></div>
+</div>
+
+<!-- ── RESULTS ────────────────────────────────────────────── -->
+<div class="phase" id="results">
+  <div class="results-header">
+    <div class="eyebrow">Your Core Values Profile</div>
+    <h2>What you can't live without</h2>
+  </div>
+  <div class="results-body" id="results-body"></div>
+</div>
+
+<!-- ── REFLECT ────────────────────────────────────────────── -->
+<div class="phase" id="reflect">
+  <div class="phase-header">
+    <div>
+      <h2>Phase 5 — Reflection</h2>
+      <div class="sub">Seven themes. Honest answers. There are no right ones.</div>
+    </div>
+  </div>
+  <div class="reflect-body" id="reflect-body"></div>
+</div>
+
+<script>
+const VALUES = [
+  { name: "Accomplishment",  desc: "Succeeding in reaching goals" },
+  { name: "Advancement",     desc: "Progress, promotion, improvement" },
+  { name: "Adventure",       desc: "Taking risks, new experiences" },
+  { name: "Affection",       desc: "Love, deep friendship" },
+  { name: "Altruism",        desc: "Helping those who cannot help themselves" },
+  { name: "Balance",         desc: "Calm, moderation, perspective" },
+  { name: "Commitment",      desc: "Dedication to cause, satisfaction in obligation" },
+  { name: "Compassion",      desc: "Empathy, tolerance and understanding of others" },
+  { name: "Competence",      desc: "Doing things well, consistent self-improvement" },
+  { name: "Competitiveness", desc: "Besting performance in yourself or others" },
+  { name: "Control",         desc: "Influence or direct people's behavior, course of events" },
+  { name: "Cooperation",     desc: "Pulling together for a common goal, support of others" },
+  { name: "Courage",         desc: "Testing limits, facing difficulties with resilience" },
+  { name: "Creativity",      desc: "Imagination, new ways of doing and seeing" },
+  { name: "Curiosity",       desc: "Sense of wonder, awe about the world" },
+  { name: "Determination",   desc: "Strength and perseverance, whatever it takes" },
+  { name: "Enlightenment",   desc: "Pursuit of awareness that feeds the soul" },
+  { name: "Equality",        desc: "Protection of equivalent status, rights, opportunities" },
+  { name: "Fairness",        desc: "Equal consideration, value of the greater good" },
+  { name: "Family",          desc: "Mutual support and growth" },
+  { name: "Freedom",         desc: "Independence, free will" },
+  { name: "Fun",             desc: "Enjoyment, playfulness, sense of play" },
+  { name: "Harmony",         desc: "Oneness, alignment" },
+  { name: "Health",          desc: "Well-being of mind, body and spirit" },
+  { name: "Humor",           desc: "Cleverness, stress-relieving perspective" },
+  { name: "Impact",          desc: "Making a difference, changing the world, creating legacy" },
+  { name: "Individuality",   desc: "Originality, self-expression" },
+  { name: "Influence",       desc: "Persuasion, bringing others together around a common cause" },
+  { name: "Innovation",      desc: "Creating something new, better, different" },
+  { name: "Integrity",       desc: "Honor, honesty, strength of character" },
+  { name: "Intelligence",    desc: "Acquiring and applying knowledge" },
+  { name: "Involvement",     desc: "Being present and participating fully" },
+  { name: "Joy",             desc: "Appreciating the extraordinary in everyday things" },
+  { name: "Learning",        desc: "Continuing education and experiences" },
+  { name: "Loyalty",         desc: "Remaining faithful to a person or cause" },
+  { name: "Order",           desc: "Respect for procedure and organization, calm" },
+  { name: "Passion",         desc: "Enthusiasm, powerful attraction" },
+  { name: "Peace",           desc: "Calm, centered, free from stress" },
+  { name: "Power",           desc: "Ability to influence people and conditions" },
+  { name: "Recognition",     desc: "Attention, positive notice" },
+  { name: "Relationships",   desc: "Connection with others" },
+  { name: "Respect",         desc: "Fair treatment, valuing individuals for uniqueness and opinion" },
+  { name: "Responsibility",  desc: "Sense of duty and conscientiousness" },
+  { name: "Security",        desc: "Financial and/or emotional stability" },
+  { name: "Service",         desc: "Being of assistance and support to a person or cause" },
+  { name: "Spirituality",    desc: "Moral compass, belief in higher purpose, faith" },
+  { name: "Stability",       desc: "Belief in the tried and true" },
+  { name: "Teaching",        desc: "Passing knowledge on to others" },
+  { name: "Tradition",       desc: "Support for customs and beliefs passed down" },
+  { name: "Wisdom",          desc: "Application of knowledge and experience" },
+];
+
+const QUESTIONS = [
+  "When you are living this value, how happy do you feel?",
+  "How much of your daily behavior reflects this value?",
+  "How strongly would you defend this value if someone challenged it?",
+  "How much does this value guide your most important decisions?",
+  "If you could not live this value at all, how much would your life suffer?",
+  "How often do people who know you well recognize this value in you?",
+  "How consistent have you been in living this value throughout your life?",
+  "How much energy do you devote to protecting or pursuing this value?",
+  "How much would compromising this value affect your self-respect?",
+  "How deeply rooted is this value in who you are — core, not just learned?",
+  "How much does this value connect to your sense of purpose?",
+  "If someone close to you repeatedly violated this value, how strongly would you react?",
+  "How much would you be willing to sacrifice to uphold this value?",
+  "How clearly does this value show up in how you treat others?",
+  "Looking back, how much has this value defined the best moments of your life?",
+];
+
+const REFLECT_THEMES = [
+  { theme: "Beginnings",
+    q: v => `When did you first become aware that <em>${v}</em> mattered to you? What experience woke that up?` },
+  { theme: "Challenges",
+    q: v => `Think of a time <em>${v}</em> was tested under real pressure. What did you do — and what does that tell you?` },
+  { theme: "Decisions",
+    q: v => `Describe a major decision where <em>${v}</em> was the deciding factor. What would you have chosen without it?` },
+  { theme: "Good Times",
+    q: v => `When has living <em>${v}</em> brought you the most joy or satisfaction?` },
+  { theme: "Bad Times",
+    q: v => `Think of a time you compromised <em>${v}</em>. How did that feel, and what did you learn?` },
+  { theme: "Messages",
+    q: v => `If <em>${v}</em> could speak for you, what would it say about the kind of person you are?` },
+  { theme: "Endings",
+    q: v => `Imagine looking back at your life from the very end. How much does <em>${v}</em> define the story you'd want told?` },
+];
+
+// ── State ───────────────────────────────────────────────────
+let picked  = new Set(); // Phase 1 selections
+let kept5   = new Set(); // Phase 2 selections
+let kept3   = new Set(); // Phase 3 selections
+let confirmIdx = 0;
+let scores  = {};        // valueName → [15 numbers]
+let coreValues = [];     // final 3 names
+
+// ── Utilities ───────────────────────────────────────────────
+function showPhase(id) {
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function scoreTier(total) {
+  if (total >= 135) return { label: 'CORE',   cls: 'tier-core',   desc: 'This value strongly defines you. You live it, defend it, and build your life around it.' };
+  if (total >= 120) return { label: 'STRONG', cls: 'tier-strong', desc: 'A strong preference that genuinely shapes your behavior and choices.' };
+  if (total >= 105) return { label: 'UNSURE', cls: 'tier-unsure', desc: 'Not fully confirmed. This value may be aspirational — consider revisiting your choices.' };
+  return               { label: 'SPECIAL', cls: 'tier-special', desc: 'This value appears more aspirational than core. It may be worth starting over.' };
+}
+
+// ── Phase 1: Pick ───────────────────────────────────────────
+function startPick() {
+  picked.clear();
+  const grid = document.getElementById('values-grid');
+  grid.innerHTML = '';
+  VALUES.forEach(v => {
+    const tile = document.createElement('div');
+    tile.className = 'value-tile';
+    tile.dataset.name = v.name;
+    tile.innerHTML = `<h4>${v.name}</h4><p>${v.desc}</p>`;
+    tile.addEventListener('click', () => togglePick(v.name));
+    grid.appendChild(tile);
+  });
+  updatePickUI();
+  showPhase('pick');
+}
+
+function togglePick(name) {
+  if (picked.has(name)) { picked.delete(name); }
+  else if (picked.size < 10) { picked.add(name); }
+  updatePickUI();
+}
+
+function updatePickUI() {
+  const n = picked.size;
+  document.getElementById('pick-counter').textContent = `${n} / 10`;
+  document.querySelectorAll('.value-tile').forEach(tile => {
+    const sel = picked.has(tile.dataset.name);
+    tile.classList.toggle('selected', sel);
+    tile.classList.toggle('locked', n >= 10 && !sel);
+  });
+  document.getElementById('pick-btn').disabled = n !== 10;
+  document.getElementById('pick-note').textContent =
+    n === 10 ? "You've picked your 10. Continue when ready." :
+    n === 9  ? "One more." :
+    `Select ${10 - n} more values to continue.`;
+}
+
+// ── Phase 2: Cut to 5 ───────────────────────────────────────
+function startCut5() {
+  kept5.clear();
+  renderCutGrid('cut5-grid', [...picked], kept5, 5, 'cut5-counter', 'cut5-note', 'cut5-btn', toggleCut5);
+  showPhase('cut5');
+}
+
+function toggleCut5(name) {
+  if (kept5.has(name)) kept5.delete(name);
+  else if (kept5.size < 5) kept5.add(name);
+  renderCutGrid('cut5-grid', [...picked], kept5, 5, 'cut5-counter', 'cut5-note', 'cut5-btn', toggleCut5);
+}
+
+// ── Phase 3: Cut to 3 ───────────────────────────────────────
+function startCut3() {
+  kept3.clear();
+  renderCutGrid('cut3-grid', [...kept5], kept3, 3, 'cut3-counter', 'cut3-note', 'cut3-btn', toggleCut3);
+  showPhase('cut3');
+}
+
+function toggleCut3(name) {
+  if (kept3.has(name)) kept3.delete(name);
+  else if (kept3.size < 3) kept3.add(name);
+  renderCutGrid('cut3-grid', [...kept5], kept3, 3, 'cut3-counter', 'cut3-note', 'cut3-btn', toggleCut3);
+}
+
+function renderCutGrid(gridId, pool, kept, target, counterId, noteId, btnId, toggleFn) {
+  const grid = document.getElementById(gridId);
+  grid.innerHTML = '';
+  pool.forEach(name => {
+    const v = VALUES.find(x => x.name === name);
+    const isKept = kept.has(name);
+    const isLocked = !isKept && kept.size >= target;
+    const tile = document.createElement('div');
+    tile.className = `cut-tile${isKept ? ' kept' : ''}${isLocked ? ' locked' : ''}`;
+    tile.innerHTML = `
+      <div class="cut-status">${isKept ? '✓ keeping' : '○ not kept'}</div>
+      <h4>${v.name}</h4>
+      <p>${v.desc}</p>
+    `;
+    if (!isLocked) tile.addEventListener('click', () => toggleFn(name));
+    grid.appendChild(tile);
+  });
+  const n = kept.size;
+  document.getElementById(counterId).textContent = `${n} / ${target} kept`;
+  document.getElementById(btnId).disabled = n !== target;
+  document.getElementById(noteId).textContent =
+    n === target ? "Good. Continue when you're sure." :
+    `Keep ${target - n} more value${target - n !== 1 ? 's' : ''} to continue.`;
+}
+
+// ── Phase 4: Confirm ────────────────────────────────────────
+function startConfirm() {
+  coreValues = [...kept3];
+  scores = {};
+  coreValues.forEach(name => { scores[name] = new Array(15).fill(0); });
+  confirmIdx = 0;
+  renderConfirmValue();
+  showPhase('confirm');
+}
+
+function renderConfirmValue() {
+  const name = coreValues[confirmIdx];
+  const v = VALUES.find(x => x.name === name);
+  document.getElementById('confirm-counter').textContent = `Value ${confirmIdx + 1} of 3`;
+
+  const body = document.getElementById('confirm-body');
+  body.innerHTML = `
+    <div style="padding:32px 0 0">
+      <div class="confirm-value-eyebrow">Confirming value ${confirmIdx + 1} of 3</div>
+      <div class="confirm-value-name">${v.name}</div>
+      <div class="confirm-value-desc">${v.desc}</div>
+      <div class="confirm-dots">
+        ${coreValues.map((_, i) => `<div class="confirm-dot ${i < confirmIdx ? 'done' : i === confirmIdx ? 'active' : ''}"></div>`).join('')}
+      </div>
+      <div class="questions-list" id="questions-list"></div>
+      <div id="score-result-area"></div>
+      <div class="phase-footer" style="padding: 16px 0 32px; border: none;">
+        <div class="footer-note" id="confirm-note">Answer all 15 questions to see your score.</div>
+        <button class="btn-primary" id="confirm-next-btn" disabled onclick="nextConfirm()">
+          ${confirmIdx < 2 ? 'Next Value →' : 'See My Core Values →'}
+        </button>
+      </div>
+    </div>
+  `;
+
+  const list = document.getElementById('questions-list');
+  QUESTIONS.forEach((q, qi) => {
+    const row = document.createElement('div');
+    row.className = 'question-row';
+    row.innerHTML = `
+      <div class="question-text">${qi + 1}. ${q}</div>
+      <div class="score-btns">
+        ${[1,2,3,4,5,6,7,8,9,10].map(n =>
+          `<button class="score-btn" data-qi="${qi}" data-n="${n}" onclick="setScore(${qi},${n})">${n}</button>`
+        ).join('')}
+      </div>
+      <div class="score-labels"><span>Low</span><span>High</span></div>
+    `;
+    list.appendChild(row);
+  });
+
+  // Restore saved answers
+  scores[name].forEach((val, qi) => { if (val > 0) applyScoreUI(qi, val); });
+  updateConfirmState(name);
+}
+
+function setScore(qi, n) {
+  const name = coreValues[confirmIdx];
+  scores[name][qi] = n;
+  applyScoreUI(qi, n);
+  updateConfirmState(name);
+}
+
+function applyScoreUI(qi, n) {
+  document.querySelectorAll(`[data-qi="${qi}"]`).forEach(btn => {
+    btn.classList.toggle('selected', parseInt(btn.dataset.n) === n);
+    btn.closest('.question-row').classList.toggle('answered', scores[coreValues[confirmIdx]][qi] > 0);
+  });
+}
+
+function updateConfirmState(name) {
+  const answered = scores[name].filter(s => s > 0).length;
+  const done = answered === 15;
+  const remaining = 15 - answered;
+  document.getElementById('confirm-note').textContent =
+    done ? 'All answered! See your score below.' :
+    `${remaining} question${remaining !== 1 ? 's' : ''} remaining.`;
+  document.getElementById('confirm-next-btn').disabled = !done;
+
+  if (done) {
+    const total = scores[name].reduce((a, b) => a + b, 0);
+    const { label, cls, desc } = scoreTier(total);
+    document.getElementById('score-result-area').innerHTML = `
+      <div class="score-result-card">
+        <div class="score-out-of">Score for ${name}</div>
+        <div class="score-total">${total}</div>
+        <div class="score-out-of">out of 150</div>
+        <div class="score-tier ${cls}">${label}</div>
+        <div class="score-tier-desc">${desc}</div>
+      </div>
+    `;
+  }
+}
+
+function nextConfirm() {
+  confirmIdx++;
+  if (confirmIdx >= 3) {
+    buildResultsPage();
+    showPhase('results');
+  } else {
+    renderConfirmValue();
+    window.scrollTo(0, 0);
+  }
+}
+
+// ── Results ─────────────────────────────────────────────────
+function buildResultsPage() {
+  const body = document.getElementById('results-body');
+  body.innerHTML = '<div class="section-label">Your Three Core Values</div>';
+
+  const grid = document.createElement('div');
+  grid.className = 'core-grid';
+  coreValues.forEach((name, i) => {
+    const total = scores[name].reduce((a, b) => a + b, 0);
+    const { label } = scoreTier(total);
+    const v = VALUES.find(x => x.name === name);
+    grid.innerHTML += `
+      <div class="core-card">
+        <div class="core-card-rank">#${i+1}${i===0?' — Primary':''}</div>
+        <div class="core-card-name">${name}</div>
+        <div class="core-card-desc">${v.desc}</div>
+        <div class="core-card-score">${total} / 150</div>
+        <div class="core-card-tier">${label}</div>
+      </div>
+    `;
+  });
+  body.appendChild(grid);
+
+  const scoreLabel = document.createElement('div');
+  scoreLabel.className = 'section-label';
+  scoreLabel.textContent = 'Score Guide';
+  body.appendChild(scoreLabel);
+
+  const guide = document.createElement('div');
+  guide.style.cssText = 'font-size:10px;color:#7a6e62;line-height:2.2;letter-spacing:0.3px;';
+  guide.innerHTML = `
+    <span style="color:#d4a843">135–150</span> &nbsp;CORE — strongly defines you &nbsp;&nbsp;
+    <span style="color:var(--accent-light)">120–134</span> &nbsp;STRONG — genuinely shapes you &nbsp;&nbsp;
+    <span style="color:var(--muted)">105–119</span> &nbsp;UNSURE — revisit &nbsp;&nbsp;
+    <span style="color:#888">&lt;105</span> &nbsp;SPECIAL — consider starting over
+  `;
+  body.appendChild(guide);
+
+  const actions = document.createElement('div');
+  actions.className = 'results-actions';
+  actions.innerHTML = `
+    <button class="btn-primary" onclick="showReflect()">Reflect on These Values →</button>
+    <button class="btn-ghost" onclick="window.print()">Print / Save</button>
+    <button class="btn-ghost" onclick="startPick()">Start Over</button>
+  `;
+  body.appendChild(actions);
+}
+
+// ── Reflect ─────────────────────────────────────────────────
+function showReflect() {
+  const primary = coreValues[0];
+  const body = document.getElementById('reflect-body');
+  body.innerHTML = `<p style="font-size:11px;color:var(--muted);margin-bottom:32px;line-height:1.8;">Use your primary value — <strong>${primary}</strong> — to guide your answers. Take your time. There are no right ones, only honest ones.</p>`;
+
+  REFLECT_THEMES.forEach(t => {
+    const section = document.createElement('div');
+    section.className = 'reflect-theme';
+    section.innerHTML = `
+      <div class="reflect-theme-label">${t.theme}</div>
+      <div class="reflect-q">
+        <p>${t.q(primary)}</p>
+        <textarea placeholder="Your thoughts..."></textarea>
+      </div>
+    `;
+    body.appendChild(section);
+  });
+
+  const done = document.createElement('div');
+  done.className = 'all-done-msg';
+  done.innerHTML = `
+    <h3>You know yourself better than you think.</h3>
+    <p>Share your answers with someone who knows you well.<br>Their perspective will either confirm what you've found — or reveal something even deeper.</p>
+    <br>
+    <button class="btn-primary" onclick="window.print()" style="margin-top:8px">Print / Save Results →</button>
+  `;
+  body.appendChild(done);
+
+  showPhase('reflect');
+}
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Values Card Sort — Choose Language</title>
+  <title>Values Exercises</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -114,24 +114,81 @@
       color: #7a6e62;
       letter-spacing: 0.5px;
     }
+
+    .exercise-block {
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 40px;
+    }
+
+    .exercise-label {
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .exercise-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--paper);
+      margin-bottom: 4px;
+    }
+
+    .exercise-desc {
+      font-size: 10px;
+      color: #7a6e62;
+      margin-bottom: 16px;
+      letter-spacing: 0.3px;
+      line-height: 1.6;
+    }
+
+    .divider {
+      width: 100%;
+      max-width: 600px;
+      border: none;
+      border-top: 1px solid #2a2420;
+      margin: 8px 0 40px;
+    }
   </style>
 </head>
 <body>
-  <div class="eyebrow">University of New Mexico · Miller et al., 2011</div>
-  <h1>Personal <em>Values</em><br>Card Sort</h1>
-  <p class="tagline">100 values. Five buckets. One ranking. A few minutes to map what drives you.</p>
+  <div class="eyebrow">Personal Values Exercises</div>
+  <h1>Know Your<br><em>Values</em></h1>
+  <p class="tagline">Two approaches to uncovering what matters most to you.</p>
 
-  <p class="lang-label">Choose your language</p>
-  <div class="lang-options">
-    <a href="values-card-sort.html" class="lang-link">
-      <span class="lang-name">English</span>
-      <span class="lang-desc">Start the exercise in English</span>
-    </a>
-    <a href="values-card-sort-es.html" class="lang-link">
-      <span class="lang-name">Español</span>
-      <span class="lang-native">Español mexicano</span>
-      <span class="lang-desc">Iniciar el ejercicio en español</span>
-    </a>
+  <div class="exercise-block">
+    <div class="exercise-label">Exercise 1 · Stan Slap · Bury My Heart at Conference Room B</div>
+    <div class="exercise-title">The 10–5–3 Values Exercise</div>
+    <div class="exercise-desc">50 values. Three reductions. A deep confirmation. Finds what you can't live without.</div>
+    <div class="lang-options" style="justify-content:flex-start;">
+      <a href="values-10-5-3.html" class="lang-link">
+        <span class="lang-name">English</span>
+        <span class="lang-desc">Start the 10–5–3 exercise</span>
+      </a>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="exercise-block">
+    <div class="exercise-label">Exercise 2 · University of New Mexico · Miller et al., 2011</div>
+    <div class="exercise-title">Personal Values Card Sort</div>
+    <div class="exercise-desc">100 values. Five buckets. One ranking. A few minutes to map what drives you.</div>
+    <p class="lang-label">Choose your language</p>
+    <div class="lang-options">
+      <a href="values-card-sort.html" class="lang-link">
+        <span class="lang-name">English</span>
+        <span class="lang-desc">Start the exercise in English</span>
+      </a>
+      <a href="values-card-sort-es.html" class="lang-link">
+        <span class="lang-name">Español</span>
+        <span class="lang-native">Español mexicano</span>
+        <span class="lang-desc">Iniciar el ejercicio en español</span>
+      </a>
+    </div>
   </div>
 </body>
 </html>
